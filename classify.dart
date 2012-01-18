@@ -30,19 +30,19 @@ class Classification {
 
 String classifySource(SourceFile src) {
   var html = new StringBuffer();
-  var tokenizer = new Tokenizer(src, /*skipWhitespace:*/false);
+  var tokenizer = new lang.Tokenizer(src, /*skipWhitespace:*/false);
 
   var token;
   var inString = false;
-  while ((token = tokenizer.next()).kind != TokenKind.END_OF_FILE) {
+  while ((token = tokenizer.next()).kind != lang.TokenKind.END_OF_FILE) {
 
     // Track whether or not we're in a string.
     switch (token.kind) {
-      case TokenKind.STRING:
-      case TokenKind.STRING_PART:
-      case TokenKind.INCOMPLETE_STRING:
-      case TokenKind.INCOMPLETE_MULTILINE_STRING_DQ:
-      case TokenKind.INCOMPLETE_MULTILINE_STRING_SQ:
+      case lang.TokenKind.STRING:
+      case lang.TokenKind.STRING_PART:
+      case lang.TokenKind.INCOMPLETE_STRING:
+      case lang.TokenKind.INCOMPLETE_MULTILINE_STRING_DQ:
+      case lang.TokenKind.INCOMPLETE_MULTILINE_STRING_SQ:
         inString = true;
         break;
     }
@@ -59,7 +59,7 @@ String classifySource(SourceFile src) {
     }
 
     // Track whether or not we're in a string.
-    if (token.kind == TokenKind.STRING) {
+    if (token.kind == lang.TokenKind.STRING) {
       inString = false;
     }
   }
@@ -88,10 +88,10 @@ bool isLower(String s) => s.toUpperCase() != s;
 
 String classify(Token token) {
   switch (token.kind) {
-    case TokenKind.ERROR:
+    case lang.TokenKind.ERROR:
       return Classification.ERROR;
 
-    case TokenKind.IDENTIFIER:
+    case lang.TokenKind.IDENTIFIER:
       // Special case for names that look like types.
       if (_looksLikeType(token.text)
           || token.text == 'num'
@@ -103,139 +103,139 @@ String classify(Token token) {
       return Classification.IDENTIFIER;
 
     // Even though it's a reserved word, let's try coloring it like a type.
-    case TokenKind.VOID:
+    case lang.TokenKind.VOID:
       return Classification.TYPE_IDENTIFIER;
 
-    case TokenKind.THIS:
-    case TokenKind.SUPER:
+    case lang.TokenKind.THIS:
+    case lang.TokenKind.SUPER:
       return Classification.SPECIAL_IDENTIFIER;
 
-    case TokenKind.STRING:
-    case TokenKind.STRING_PART:
-    case TokenKind.INCOMPLETE_STRING:
-    case TokenKind.INCOMPLETE_MULTILINE_STRING_DQ:
-    case TokenKind.INCOMPLETE_MULTILINE_STRING_SQ:
+    case lang.TokenKind.STRING:
+    case lang.TokenKind.STRING_PART:
+    case lang.TokenKind.INCOMPLETE_STRING:
+    case lang.TokenKind.INCOMPLETE_MULTILINE_STRING_DQ:
+    case lang.TokenKind.INCOMPLETE_MULTILINE_STRING_SQ:
       return Classification.STRING;
 
-    case TokenKind.INTEGER:
-    case TokenKind.HEX_INTEGER:
-    case TokenKind.DOUBLE:
+    case lang.TokenKind.INTEGER:
+    case lang.TokenKind.HEX_INTEGER:
+    case lang.TokenKind.DOUBLE:
       return Classification.NUMBER;
 
-    case TokenKind.COMMENT:
-    case TokenKind.INCOMPLETE_COMMENT:
+    case lang.TokenKind.COMMENT:
+    case lang.TokenKind.INCOMPLETE_COMMENT:
       return Classification.COMMENT;
 
     // => is so awesome it is in a class of its own.
-    case TokenKind.ARROW:
+    case lang.TokenKind.ARROW:
       return Classification.ARROW_OPERATOR;
 
-    case TokenKind.HASHBANG:
-    case TokenKind.LPAREN:
-    case TokenKind.RPAREN:
-    case TokenKind.LBRACK:
-    case TokenKind.RBRACK:
-    case TokenKind.LBRACE:
-    case TokenKind.RBRACE:
-    case TokenKind.COLON:
-    case TokenKind.SEMICOLON:
-    case TokenKind.COMMA:
-    case TokenKind.DOT:
-    case TokenKind.ELLIPSIS:
+    case lang.TokenKind.HASHBANG:
+    case lang.TokenKind.LPAREN:
+    case lang.TokenKind.RPAREN:
+    case lang.TokenKind.LBRACK:
+    case lang.TokenKind.RBRACK:
+    case lang.TokenKind.LBRACE:
+    case lang.TokenKind.RBRACE:
+    case lang.TokenKind.COLON:
+    case lang.TokenKind.SEMICOLON:
+    case lang.TokenKind.COMMA:
+    case lang.TokenKind.DOT:
+    case lang.TokenKind.ELLIPSIS:
       return Classification.PUNCTUATION;
 
-    case TokenKind.INCR:
-    case TokenKind.DECR:
-    case TokenKind.BIT_NOT:
-    case TokenKind.NOT:
-    case TokenKind.ASSIGN:
-    case TokenKind.ASSIGN_OR:
-    case TokenKind.ASSIGN_XOR:
-    case TokenKind.ASSIGN_AND:
-    case TokenKind.ASSIGN_SHL:
-    case TokenKind.ASSIGN_SAR:
-    case TokenKind.ASSIGN_SHR:
-    case TokenKind.ASSIGN_ADD:
-    case TokenKind.ASSIGN_SUB:
-    case TokenKind.ASSIGN_MUL:
-    case TokenKind.ASSIGN_DIV:
-    case TokenKind.ASSIGN_TRUNCDIV:
-    case TokenKind.ASSIGN_MOD:
-    case TokenKind.CONDITIONAL:
-    case TokenKind.OR:
-    case TokenKind.AND:
-    case TokenKind.BIT_OR:
-    case TokenKind.BIT_XOR:
-    case TokenKind.BIT_AND:
-    case TokenKind.SHL:
-    case TokenKind.SAR:
-    case TokenKind.SHR:
-    case TokenKind.ADD:
-    case TokenKind.SUB:
-    case TokenKind.MUL:
-    case TokenKind.DIV:
-    case TokenKind.TRUNCDIV:
-    case TokenKind.MOD:
-    case TokenKind.EQ:
-    case TokenKind.NE:
-    case TokenKind.EQ_STRICT:
-    case TokenKind.NE_STRICT:
-    case TokenKind.LT:
-    case TokenKind.GT:
-    case TokenKind.LTE:
-    case TokenKind.GTE:
-    case TokenKind.INDEX:
-    case TokenKind.SETINDEX:
+    case lang.TokenKind.INCR:
+    case lang.TokenKind.DECR:
+    case lang.TokenKind.BIT_NOT:
+    case lang.TokenKind.NOT:
+    case lang.TokenKind.ASSIGN:
+    case lang.TokenKind.ASSIGN_OR:
+    case lang.TokenKind.ASSIGN_XOR:
+    case lang.TokenKind.ASSIGN_AND:
+    case lang.TokenKind.ASSIGN_SHL:
+    case lang.TokenKind.ASSIGN_SAR:
+    case lang.TokenKind.ASSIGN_SHR:
+    case lang.TokenKind.ASSIGN_ADD:
+    case lang.TokenKind.ASSIGN_SUB:
+    case lang.TokenKind.ASSIGN_MUL:
+    case lang.TokenKind.ASSIGN_DIV:
+    case lang.TokenKind.ASSIGN_TRUNCDIV:
+    case lang.TokenKind.ASSIGN_MOD:
+    case lang.TokenKind.CONDITIONAL:
+    case lang.TokenKind.OR:
+    case lang.TokenKind.AND:
+    case lang.TokenKind.BIT_OR:
+    case lang.TokenKind.BIT_XOR:
+    case lang.TokenKind.BIT_AND:
+    case lang.TokenKind.SHL:
+    case lang.TokenKind.SAR:
+    case lang.TokenKind.SHR:
+    case lang.TokenKind.ADD:
+    case lang.TokenKind.SUB:
+    case lang.TokenKind.MUL:
+    case lang.TokenKind.DIV:
+    case lang.TokenKind.TRUNCDIV:
+    case lang.TokenKind.MOD:
+    case lang.TokenKind.EQ:
+    case lang.TokenKind.NE:
+    case lang.TokenKind.EQ_STRICT:
+    case lang.TokenKind.NE_STRICT:
+    case lang.TokenKind.LT:
+    case lang.TokenKind.GT:
+    case lang.TokenKind.LTE:
+    case lang.TokenKind.GTE:
+    case lang.TokenKind.INDEX:
+    case lang.TokenKind.SETINDEX:
       return Classification.OPERATOR;
 
     // Color this like a keyword
-    case TokenKind.HASH:
+    case lang.TokenKind.HASH:
 
-    case TokenKind.ABSTRACT:
-    case TokenKind.ASSERT:
-    case TokenKind.CLASS:
-    case TokenKind.EXTENDS:
-    case TokenKind.FACTORY:
-    case TokenKind.GET:
-    case TokenKind.IMPLEMENTS:
-    case TokenKind.IMPORT:
-    case TokenKind.INTERFACE:
-    case TokenKind.LIBRARY:
-    case TokenKind.NATIVE:
-    case TokenKind.NEGATE:
-    case TokenKind.OPERATOR:
-    case TokenKind.SET:
-    case TokenKind.SOURCE:
-    case TokenKind.STATIC:
-    case TokenKind.TYPEDEF:
-    case TokenKind.BREAK:
-    case TokenKind.CASE:
-    case TokenKind.CATCH:
-    case TokenKind.CONST:
-    case TokenKind.CONTINUE:
-    case TokenKind.DEFAULT:
-    case TokenKind.DO:
-    case TokenKind.ELSE:
-    case TokenKind.FALSE:
-    case TokenKind.FINALLY:
-    case TokenKind.FOR:
-    case TokenKind.IF:
-    case TokenKind.IN:
-    case TokenKind.IS:
-    case TokenKind.NEW:
-    case TokenKind.NULL:
-    case TokenKind.RETURN:
-    case TokenKind.SWITCH:
-    case TokenKind.THROW:
-    case TokenKind.TRUE:
-    case TokenKind.TRY:
-    case TokenKind.WHILE:
-    case TokenKind.VAR:
-    case TokenKind.FINAL:
+    case lang.TokenKind.ABSTRACT:
+    case lang.TokenKind.ASSERT:
+    case lang.TokenKind.CLASS:
+    case lang.TokenKind.EXTENDS:
+    case lang.TokenKind.FACTORY:
+    case lang.TokenKind.GET:
+    case lang.TokenKind.IMPLEMENTS:
+    case lang.TokenKind.IMPORT:
+    case lang.TokenKind.INTERFACE:
+    case lang.TokenKind.LIBRARY:
+    case lang.TokenKind.NATIVE:
+    case lang.TokenKind.NEGATE:
+    case lang.TokenKind.OPERATOR:
+    case lang.TokenKind.SET:
+    case lang.TokenKind.SOURCE:
+    case lang.TokenKind.STATIC:
+    case lang.TokenKind.TYPEDEF:
+    case lang.TokenKind.BREAK:
+    case lang.TokenKind.CASE:
+    case lang.TokenKind.CATCH:
+    case lang.TokenKind.CONST:
+    case lang.TokenKind.CONTINUE:
+    case lang.TokenKind.DEFAULT:
+    case lang.TokenKind.DO:
+    case lang.TokenKind.ELSE:
+    case lang.TokenKind.FALSE:
+    case lang.TokenKind.FINALLY:
+    case lang.TokenKind.FOR:
+    case lang.TokenKind.IF:
+    case lang.TokenKind.IN:
+    case lang.TokenKind.IS:
+    case lang.TokenKind.NEW:
+    case lang.TokenKind.NULL:
+    case lang.TokenKind.RETURN:
+    case lang.TokenKind.SWITCH:
+    case lang.TokenKind.THROW:
+    case lang.TokenKind.TRUE:
+    case lang.TokenKind.TRY:
+    case lang.TokenKind.WHILE:
+    case lang.TokenKind.VAR:
+    case lang.TokenKind.FINAL:
       return Classification.KEYWORD;
 
-    case TokenKind.WHITESPACE:
-    case TokenKind.END_OF_FILE:
+    case lang.TokenKind.WHITESPACE:
+    case lang.TokenKind.END_OF_FILE:
       return Classification.NONE;
 
     default:

@@ -6,7 +6,7 @@
 #library('interact');
 
 #import('dart:html');
-#import('../../frog/lang.dart');
+#import('../../frog/lang.dart', prefix: 'lang');
 #import('markdown.dart', prefix: 'md');
 
 #source('classify.dart');
@@ -27,7 +27,7 @@ main() {
         } else {
           // Syntax highlight.
           if (!pre.classes.contains('formatted')) {
-            pre.innerHTML = classifySource(new SourceFile('', pre.text));
+            pre.innerHTML = classifySource(new lang.SourceFile('', pre.text));
             pre.classes.add('formatted');
           };
           pre.classes.add('expanded');
