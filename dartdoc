@@ -27,7 +27,7 @@ pushd `dirname "$0"` >>/dev/null
 # Generate the client-side .js file from interact.dart if we haven't already
 ../../frog/minfrog --libdir=../../frog/lib \
     --out=static/interact.js --compile-only interact.dart
-  echo "Compiled interact.dart."
+echo "Compiled interact.dart."
 
 # Clean the output directory.
 if [ -d "docs" ]; then

@@ -112,7 +112,10 @@ class Search {
   }
 
   
-  /** Write a dart file from a datastructure (Map). */
+  /** 
+   * Write a dart file from a datastructure, create a sourceable file with 
+   * contents of a Map. 
+   */
   void contents2dart(bool enableSearch) {
     var _out;
     startFile('searching.dart');
