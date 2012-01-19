@@ -356,6 +356,7 @@ class Dartdoc {
   docTypes(List<Type> types, String header) {
     if (types.length == 0) return;
 
+    writeln('<div>');
     writeln('<h3>$header</h3>');
 
     for (final type in types) {
@@ -368,6 +369,7 @@ class Dartdoc {
           </div>
           ''');
     }
+    writeln('</div>');
   }
 
   docType(Type type) {
@@ -435,12 +437,14 @@ class Dartdoc {
       (name) => !name.startsWith('_'));
 
     if (names.length > 0) {
+      writeln('<div>');
       writeln('<h3>Constructors</h3>');
       names.sort((x, y) => x.toUpperCase().compareTo(y.toUpperCase()));
 
       for (final name in names) {
         docMethod(type, type.constructors[name], constructorName: name);
       }
+      writeln('</div>');
     }
   }
 
@@ -469,24 +473,32 @@ class Dartdoc {
 
     if (staticMethods.length > 0) {
       final title = type.isTop ? 'Functions' : 'Static Methods';
+      writeln('<div>');
       writeln('<h3>$title</h3>');
       for (final method in staticMethods) docMethod(type, method);
+      writeln('</div>');
     }
 
     if (staticFields.length > 0) {
       final title = type.isTop ? 'Variables' : 'Static Fields';
+      writeln('<div>');
       writeln('<h3>$title</h3>');
       for (final field in staticFields) docField(type, field);
+      writeln('</div>');
     }
 
     if (instanceMethods.length > 0) {
+      writeln('<div>');
       writeln('<h3>Methods</h3>');
       for (final method in instanceMethods) docMethod(type, method);
+      writeln('</div>');
     }
 
     if (instanceFields.length > 0) {
+      writeln('<div>');
       writeln('<h3>Fields</h3>');
       for (final field in instanceFields) docField(type, field);
+      writeln('</div>');
     }
   }
 
