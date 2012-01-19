@@ -28,7 +28,7 @@ class Classification {
   static final STRING_INTERPOLATION = 'si';
 }
 
-String classifySource(SourceFile src) {
+String classifySource(lang.SourceFile src) {
   var html = new StringBuffer();
   var tokenizer = new lang.Tokenizer(src, /*skipWhitespace:*/false);
 
@@ -86,7 +86,7 @@ bool _looksLikePrivateType(String name) {
 bool isUpper(String s) => s.toLowerCase() != s;
 bool isLower(String s) => s.toUpperCase() != s;
 
-String classify(Token token) {
+String classify(lang.Token token) {
   switch (token.kind) {
     case lang.TokenKind.ERROR:
       return Classification.ERROR;
