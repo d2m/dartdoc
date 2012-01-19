@@ -61,8 +61,6 @@ void main() {
     dartdoc = new Dartdoc();
     dartdoc.includeSource = includeSource;
     dartdoc.enableSearch = enableSearch;
-    // Search
-    dartdoc.search = new Search();
     dartdoc.document(entrypoint);
   });
 
@@ -102,7 +100,7 @@ class Dartdoc {
   /** The member that we're currently generating docs for. */
   Member _currentMember;
   
-  /** Search **/
+  /** Search backend */
   Search search;
 
   int _totalLibraries = 0;
@@ -110,7 +108,8 @@ class Dartdoc {
   int _totalMembers = 0;
 
   Dartdoc()
-    : _comments = new CommentMap() {
+    : _comments = new CommentMap(),
+      search = new Search() {
     // Patch in support for [:...:]-style code to the markdown parser.
     // TODO(rnystrom): Markdown already has syntax for this. Phase this out?
     md.InlineParser.syntaxes.insertRange(0, 1,
@@ -164,7 +163,7 @@ class Dartdoc {
       for (final library in world.libraries.getValues()) {
         docLibrary(library);
       }
-      // write dart include file.
+      // Write dart source file.
       search.contents2dart(enableSearch);
     } finally {
       options.dietParse = oldDietParse;
