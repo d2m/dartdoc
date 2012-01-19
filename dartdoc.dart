@@ -21,10 +21,12 @@
 #import('../../frog/lib/node/node.dart');
 #import('markdown.dart', prefix: 'md');
 
-#source('classify.dart');
 #source('comment_map.dart');
 #source('files.dart');
 #source('utils.dart');
+#source('search.dart');
+
+Search search;
 
 /**
  * Run this from the `utils/dartdoc` directory.
@@ -33,14 +35,21 @@ void main() {
   // The entrypoint of the library to generate docs for.
   final entrypoint = process.argv[process.argv.length - 1];
 
+  // Search
+  search = new Search();
+  
   // Parse the dartdoc options.
   bool includeSource = true;
+  bool enableSearch = true;
 
   for (int i = 2; i < process.argv.length - 1; i++) {
     final arg = process.argv[i];
     switch (arg) {
       case '--no-code':
         includeSource = false;
+        break;
+      case '--no-search':
+        enableSearch = false;
         break;
 
       default:
@@ -56,9 +65,12 @@ void main() {
   final elapsed = time(() {
     dartdoc = new Dartdoc();
     dartdoc.includeSource = includeSource;
+    dartdoc.enableSearch = enableSearch;
     dartdoc.document(entrypoint);
   });
 
+  // write dart include file.
+  search.contents2dart(enableSearch);
   print('Documented ${dartdoc._totalLibraries} libraries, ' +
       '${dartdoc._totalTypes} types, and ' +
       '${dartdoc._totalMembers} members in ${elapsed}msec.');
@@ -67,6 +79,8 @@ void main() {
 class Dartdoc {
   /** Set to `false` to not include the source code in the generated docs. */
   bool includeSource = true;
+  /** Set to `false` to not include the search widget in the generated docs. */
+  bool enableSearch = true;
 
   /**
    * The title used for the overall generated output. Set this to change it.
@@ -176,10 +190,11 @@ class Dartdoc {
         <head>
         ''');
     writeHeadContents(title);
+    // [data-path] is used to compute the urls in the search navigation. 
     write(
         '''
         </head>
-        <body>
+        <body data-path="${relativePath('.')}">
         <div class="page">
         <div class="header">
           ${a(mainUrl, '<div class="logo"></div>')}
@@ -271,6 +286,11 @@ class Dartdoc {
     // Show the exception types separately.
     final types = <Type>[];
     final exceptions = <Type>[];
+    
+    // Add search navigation entry for libraries
+    if (enableSearch == true) {
+      search.addNav([libraryUrl(library), 'library', library.name]);      
+    }
 
     for (final type in orderByName(library.types)) {
       if (type.isTop) continue;
@@ -295,6 +315,10 @@ class Dartdoc {
             '<div class="icon-$icon"></div>${typeName(type)}'));
       }
       writeln('</li>');
+      // add search navigation enrty for types
+      if (enableSearch == true) {
+        search.addNav([typeUrl(type), icon, typeName(type)]);        
+      }
     }
 
     writeln('<ul>');
@@ -554,6 +578,17 @@ class Dartdoc {
     }
 
     docParamList(type, method);
+    
+    // Add serch term entries.
+    if (enableSearch == true) {
+      if (typeName(type) == null) {
+        search.addTerm(memberAnchor(method), [libraryUrl(type.library), 
+                                              memberAnchor(method)]);
+      } else {
+        search.addTerm(memberAnchor(method), [typeUrl(type), 
+                                              memberAnchor(method)]);
+      }
+    }
 
     write(''' <a class="anchor-link" href="#${memberAnchor(method)}"
               title="Permalink to ${typeName(type)}.$name">#</a>''');
@@ -582,6 +617,18 @@ class Dartdoc {
     }
 
     annotateType(type, field.type);
+    
+    // Add serch term entries.
+    if (enableSearch == true) {
+      if (typeName(type) == null) {
+        search.addTerm(memberAnchor(field), [libraryUrl(type.library), 
+                                              memberAnchor(field)]);
+      } else {
+        search.addTerm(memberAnchor(field), [typeUrl(type), 
+                                              memberAnchor(field)]);
+      }
+    }
+
     write(
         '''
         <strong>${field.name}</strong> <a class="anchor-link"
@@ -780,16 +827,6 @@ class Dartdoc {
 
     final code = Strings.join(lines, '\n');
     return code;
-  }
-
-  /**
-   * Takes a string of Dart code and turns it into sanitized HTML.
-   */
-  formatCode(SourceSpan span) {
-    final code = unindentCode(span);
-
-    // Syntax highlight.
-    return classifySource(new SourceFile('', code));
   }
 
   /**
