@@ -26,17 +26,12 @@
 #source('utils.dart');
 #source('search.dart');
 
-Search search;
-
 /**
  * Run this from the `utils/dartdoc` directory.
  */
 void main() {
   // The entrypoint of the library to generate docs for.
   final entrypoint = process.argv[process.argv.length - 1];
-
-  // Search
-  search = new Search();
   
   // Parse the dartdoc options.
   bool includeSource = true;
@@ -66,11 +61,11 @@ void main() {
     dartdoc = new Dartdoc();
     dartdoc.includeSource = includeSource;
     dartdoc.enableSearch = enableSearch;
+    // Search
+    dartdoc.search = new Search();
     dartdoc.document(entrypoint);
   });
 
-  // write dart include file.
-  search.contents2dart(enableSearch);
   print('Documented ${dartdoc._totalLibraries} libraries, ' +
       '${dartdoc._totalTypes} types, and ' +
       '${dartdoc._totalMembers} members in ${elapsed}msec.');
@@ -106,6 +101,9 @@ class Dartdoc {
 
   /** The member that we're currently generating docs for. */
   Member _currentMember;
+  
+  /** Search **/
+  Search search;
 
   int _totalLibraries = 0;
   int _totalTypes = 0;
@@ -166,6 +164,8 @@ class Dartdoc {
       for (final library in world.libraries.getValues()) {
         docLibrary(library);
       }
+      // write dart include file.
+      search.contents2dart(enableSearch);
     } finally {
       options.dietParse = oldDietParse;
     }
