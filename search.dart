@@ -66,17 +66,19 @@ class Search {
    
   /** Add/update a searchterm entry. */
   void addTerm(String a, List b) {
+    TermItem termitem = new TermItem(b);
     // remove get/set
     a = a.toString().toLowerCase().split(':').last();
     // remove private entries
-    if (a.startsWith('_') || b[0].startsWith('_') || b[0].indexOf('/_') > -1) {
+    if (a.startsWith('_') || termitem.filename.startsWith('_') || 
+        termitem.filename.indexOf('/_') > -1) {
       return;
     }
     List key = [];
     if (searchterms.containsKey(a)) {
       key = searchterms[a];
     }
-    key.add(new TermItem(b));
+    key.add(termitem);
     searchterms[a] = key;
   }
 
@@ -114,7 +116,7 @@ class Search {
   
   /** 
    * Write a dart file from a datastructure, create a sourceable file with 
-   * contents of a Map. 
+   * contents of a Map ('./searching.dart').
    */
   void contents2dart(bool enableSearch) {
     var _out;
