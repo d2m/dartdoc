@@ -2,5 +2,6 @@
 /docs/
 searching.dart
 
-# Generated from interact.dart
-static/interact.js
+# Compiled .js output.
+static/client-static.js
+static/client-live-nav.js
