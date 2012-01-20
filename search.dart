@@ -1,33 +1,3 @@
-/** Helper class */
-class _NavItem {
-  String filename;
-  String typ;
-  String title;
-  String _hash;
-  
-  _NavItem(a) {
-    filename = a[0];
-    typ = a[1];
-    title = a[2];
-    _hash = '$filename $typ $title';
-  }
-    
-}
-
-/** Helper class */
-class _TermItem {
-  String filename;
-  String memberid;
-  String _hash;
-  
-  _TermItem(a) {
-    filename = a[0];
-    memberid = a[1];
-    _hash = '$filename $memberid';
-  }
-  
-}
-
 /**
  * Stores data to create navigation entries and search filters.
  * Serializes data into a dart file.
@@ -129,6 +99,7 @@ class Search {
       
       // create an inverted index for navigation
       _out = [];
+
       for (_NavItem navitem in navigation) {
         if (filelist.indexOf(navitem.filename) == -1) {
           filelist.add(navitem.filename);
@@ -191,4 +162,32 @@ class Search {
     endLocalFile();
   } 
 
+}
+
+/** Helper class */
+class _NavItem {
+  String filename;
+  String typ;
+  String title;
+  String _hash;
+  
+  _NavItem(a) {
+    filename = a[0];
+    typ = a[1];
+    title = a[2];
+    _hash = '$filename $typ $title';
+  }
+}
+
+/** Helper class */
+class _TermItem {
+  String filename;
+  String memberid;
+  String _hash;
+  
+  _TermItem(a) {
+    filename = a[0];
+    memberid = a[1];
+    _hash = '$filename $memberid';
+  }
 }

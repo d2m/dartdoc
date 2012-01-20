@@ -202,6 +202,7 @@ class Dartdoc {
 
       // Generate the docs.
       if (mode == MODE_LIVE_NAV) docNavigationJson();
+      if (enableSearch) docSearchNavigation();
 
       docIndex();
       for (final library in world.libraries.getValues()) {
@@ -351,13 +352,18 @@ class Dartdoc {
   }
 
   docNavigation() {
-    writeln(
+    if (mode == MODE_STATIC) {
+      writeln(
         '''
-        <div class="nav">
+        <div class="nav built">
         ''');
 
-    if (mode == MODE_STATIC) {
-      for (final library in orderByName(world.libraries)) {
+      var map = {};
+      for (var library in orderByName(world.libraries)) {
+        map[library.name] = library;
+      }
+      
+      for (final library in orderByName(map)) {
         write('<h2><div class="icon-library"></div>');
 
         if ((_currentLibrary == library) && (_currentType == null)) {
@@ -370,12 +376,12 @@ class Dartdoc {
         // Only expand classes in navigation for current library.
         if (_currentLibrary == library) docLibraryNavigation(library);
       }
-    }
-    if (enableSearch == true) {
-      for (final library in orderByName(world.libraries)) {
-        // Only expand classes in navigation for current library.
-        if (_currentLibrary == library) docSearchNavigation(library);
-        }
+    } else {
+      writeln(
+        '''
+        <div class="nav">
+        ''');
+
     }
     writeln('</div>');
   }
@@ -419,35 +425,44 @@ class Dartdoc {
   }
 
   /** Stores the navigation for the types contained by the given library. */
-  docSearchNavigation(Library library) {
+  docSearchNavigation() {
     assert(enableSearch == true);
-    // Show the exception types separately.
-    final types = <Type>[];
-    final exceptions = <Type>[];
     
-    // Add search navigation entry for libraries
-    search.addNav([libraryUrl(library), 'library', library.name]);      
-
-    for (final type in orderByName(library.types)) {
-      if (type.isTop) continue;
-      if (type.name.startsWith('_')) continue;
-
-      if (type.name.endsWith('Exception')) {
-        exceptions.add(type);
-      } else {
-        types.add(type);
+    var map = {};
+    for (var library in orderByName(world.libraries)) {
+      map[library.name] = library;
+    }
+    
+    for (final library in orderByName(map)) {
+      
+      // Show the exception types separately.
+      final types = <Type>[];
+      final exceptions = <Type>[];
+      
+      // Add search navigation entry for libraries
+      search.addNav([libraryUrl(library), 'library', library.name]);      
+  
+      for (final type in orderByName(library.types)) {
+        if (type.isTop) continue;
+        if (type.name.startsWith('_')) continue;
+  
+        if (type.name.endsWith('Exception')) {
+          exceptions.add(type);
+        } else {
+          types.add(type);
+        }
       }
+  
+      if ((types.length == 0) && (exceptions.length == 0)) return;
+  
+      writeType(String icon, Type type) {
+        search.addNav([typeUrl(type), icon, typeName(type)]);        
+      }
+  
+      types.forEach((type) => writeType(type.isClass ? 'class' : 'interface',
+          type));
+      exceptions.forEach((type) => writeType('exception', type));
     }
-
-    if ((types.length == 0) && (exceptions.length == 0)) return;
-
-    writeType(String icon, Type type) {
-      search.addNav([typeUrl(type), icon, typeName(type)]);        
-    }
-
-    types.forEach((type) => writeType(type.isClass ? 'class' : 'interface',
-        type));
-    exceptions.forEach((type) => writeType('exception', type));
   }
 
   docLibrary(Library library) {

@@ -25,17 +25,13 @@ fi
 pushd `dirname "$0"` >>/dev/null
 
 compileToJs() {
-  if [ "$1.dart" -nt "static/$1.js" ]
-    then
+#  if [ "$1.dart" -nt "static/$1.js" ]
+#    then
     ../../frog/minfrog --libdir=../../frog/lib \
       --out=static/$1.js --compile-only $1.dart
     echo "Compiled $1.dart."
-  fi
+#  fi
 }
-
-# Generate the client-side .js files if needed.
-compileToJs "client-static"
-compileToJs "client-live-nav"
 
 # Clean the output directory.
 if [ -d "docs" ]; then
@@ -43,13 +39,17 @@ if [ -d "docs" ]; then
 fi
 mkdir docs
 
-# Copy the static files over.
-cp -R static/* docs
-
 # Ditch the first arg so we can pass any extra arguments to dartdoc.
 shift
 
 # Generate the user's docs.
 ../../frog/minfrog --libdir=../../frog/lib dartdoc.dart "$entrypoint" $@
+
+# Generate the client-side .js files if needed.
+compileToJs "client-static"
+compileToJs "client-live-nav"
+
+# Copy the static files over.
+cp -R static/* docs
 
 popd >>/dev/null

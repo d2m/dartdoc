@@ -10,9 +10,12 @@
 #import('classify.dart');
 
 #source('client-shared.dart');
+#source('searching.dart');
+#source('client-search.dart');
 
 main() {
   window.on.contentLoaded.add((e) {
     enableCodeBlocks();
+    searchWidget();
   });
 }

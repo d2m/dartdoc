@@ -12,6 +12,9 @@
 #import('markdown.dart', prefix: 'md');
 
 #source('client-shared.dart');
+#source('searching.dart');
+#source('client-search.dart');
+
 
 // The names of the library and type that this page documents.
 String currentLibrary = null;
@@ -29,11 +32,12 @@ main() {
     prefix = (currentType != null) ? '../' : '';
 
     enableCodeBlocks();
-
     // Request the navigation data so we can build the HTML for it.
     new XMLHttpRequest.getTEMPNAME('${prefix}nav.json', (request) {
       buildNavigation(JSON.parse(request.responseText));
     });
+
+    searchWidget();
   });
 }
 
@@ -70,6 +74,7 @@ buildNavigation(libraries) {
   // Insert it into the DOM.
   final navElement = document.query('.nav');
   navElement.innerHTML = html.toString();
+  navElement.classes.add('built');
 }
 
 /** Writes the navigation for the types contained by [library] to [html]. */
