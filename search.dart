@@ -1,11 +1,11 @@
 /** Helper class */
-class NavItem {
+class _NavItem {
   String filename;
   String typ;
   String title;
   String _hash;
   
-  NavItem(a) {
+  _NavItem(a) {
     filename = a[0];
     typ = a[1];
     title = a[2];
@@ -15,12 +15,12 @@ class NavItem {
 }
 
 /** Helper class */
-class TermItem {
+class _TermItem {
   String filename;
   String memberid;
   String _hash;
   
-  TermItem(a) {
+  _TermItem(a) {
     filename = a[0];
     memberid = a[1];
     _hash = '$filename $memberid';
@@ -38,7 +38,7 @@ class Search {
   /** Inverted index, used in searchterms. */
   List id;
   /** List of available navigation entries. */
-  List<NavItem> navigation;
+  List<_NavItem> navigation;
   /** Searchindex. */
   Map<String, List> searchterms;
   /** Names used for navigation icon entries. */
@@ -54,7 +54,7 @@ class Search {
   /** Add a navigation entry. */
   void addNav(List a) {
     // lists are not hashable? this gets me poor performance
-    NavItem b = new NavItem(a);
+    _NavItem b = new _NavItem(a);
     if (navigation.length == 0) {
       navigation.add(b);
     } else {
@@ -66,19 +66,19 @@ class Search {
    
   /** Add/update a searchterm entry. */
   void addTerm(String a, List b) {
-    TermItem termitem = new TermItem(b);
+    _TermItem _TermItem = new _TermItem(b);
     // remove get/set
     a = a.toString().toLowerCase().split(':').last();
     // remove private entries
-    if (a.startsWith('_') || termitem.filename.startsWith('_') || 
-        termitem.filename.indexOf('/_') > -1) {
+    if (a.startsWith('_') || _TermItem.filename.startsWith('_') || 
+        _TermItem.filename.indexOf('/_') > -1) {
       return;
     }
     List key = [];
     if (searchterms.containsKey(a)) {
       key = searchterms[a];
     }
-    key.add(termitem);
+    key.add(_TermItem);
     searchterms[a] = key;
   }
 
@@ -129,7 +129,7 @@ class Search {
       
       // create an inverted index for navigation
       _out = [];
-      for (NavItem i in navigation) {
+      for (_NavItem i in navigation) {
         if (filelist.indexOf(i.filename) == -1) {
           filelist.add(i.filename);
         }
@@ -143,14 +143,14 @@ class Search {
       // create an inverted index
       _out = {};
       for (String key in searchterms.getKeys()) {
-        List termitems = searchterms[key];
+        List _TermItems = searchterms[key];
         List bco = [];
-        for (TermItem termitem in termitems) {
-          if (id.indexOf(termitem.memberid) == -1) {
-            id.add(termitem.memberid);
+        for (_TermItem _TermItem in _TermItems) {
+          if (id.indexOf(_TermItem.memberid) == -1) {
+            id.add(_TermItem.memberid);
           }
-          bco.add(filelist.indexOf(termitem.filename));
-          bco.add(id.indexOf(termitem.memberid));
+          bco.add(filelist.indexOf(_TermItem.filename));
+          bco.add(id.indexOf(_TermItem.memberid));
         }
         _out[key] = bco;        
       }
