@@ -54,31 +54,31 @@ class Search {
   /** Add a navigation entry. */
   void addNav(List a) {
     // lists are not hashable? this gets me poor performance
-    _NavItem b = new _NavItem(a);
+    _NavItem navitem = new _NavItem(a);
     if (navigation.length == 0) {
-      navigation.add(b);
+      navigation.add(navitem);
     } else {
-      if (navigation.some((e) => e._hash == b._hash) != true) {
-        navigation.add(b);
+      if (navigation.some((e) => e._hash == navitem._hash) != true) {
+        navigation.add(navitem);
       }      
     }
   }
    
   /** Add/update a searchterm entry. */
   void addTerm(String a, List b) {
-    _TermItem _TermItem = new _TermItem(b);
+    _TermItem termitem = new _TermItem(b);
     // remove get/set
     a = a.toString().toLowerCase().split(':').last();
     // remove private entries
-    if (a.startsWith('_') || _TermItem.filename.startsWith('_') || 
-        _TermItem.filename.indexOf('/_') > -1) {
+    if (a.startsWith('_') || termitem.filename.startsWith('_') || 
+        termitem.filename.indexOf('/_') > -1) {
       return;
     }
     List key = [];
     if (searchterms.containsKey(a)) {
       key = searchterms[a];
     }
-    key.add(_TermItem);
+    key.add(termitem);
     searchterms[a] = key;
   }
 
@@ -129,13 +129,13 @@ class Search {
       
       // create an inverted index for navigation
       _out = [];
-      for (_NavItem i in navigation) {
-        if (filelist.indexOf(i.filename) == -1) {
-          filelist.add(i.filename);
+      for (_NavItem navitem in navigation) {
+        if (filelist.indexOf(navitem.filename) == -1) {
+          filelist.add(navitem.filename);
         }
-        _out.add(filelist.indexOf(i.filename));
-        _out.add(typ.indexOf(i.typ));
-        _out.add(i.title);
+        _out.add(filelist.indexOf(navitem.filename));
+        _out.add(typ.indexOf(navitem.typ));
+        _out.add(navitem.title);
       }
       navigation = _out;
       
@@ -143,14 +143,14 @@ class Search {
       // create an inverted index
       _out = {};
       for (String key in searchterms.getKeys()) {
-        List _TermItems = searchterms[key];
+        List termitems = searchterms[key];
         List bco = [];
-        for (_TermItem _TermItem in _TermItems) {
-          if (id.indexOf(_TermItem.memberid) == -1) {
-            id.add(_TermItem.memberid);
+        for (_TermItem termitem in termitems) {
+          if (id.indexOf(termitem.memberid) == -1) {
+            id.add(termitem.memberid);
           }
-          bco.add(filelist.indexOf(_TermItem.filename));
-          bco.add(id.indexOf(_TermItem.memberid));
+          bco.add(filelist.indexOf(termitem.filename));
+          bco.add(id.indexOf(termitem.memberid));
         }
         _out[key] = bco;        
       }
