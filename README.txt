@@ -2,9 +2,17 @@ Dartdoc generates static HTML documentation from Dart code.
 
 To use it, from this directory, run:
 
-    $ dartdoc <path to .dart file>
+    $ dartdoc [options] <path to .dart file>
+
+Options are:
+
+  --no-code       code snippets are not included with the documentation
+  --no-search     disable search functionality
+  --mode=static   render the navigation in HTML
 
 This will create a "docs" directory with the docs for your libraries.
+By default documents are rendered with dynamic generated navigation, 
+code snippets included and search functionality enabled.
 
 
 How docs are generated
