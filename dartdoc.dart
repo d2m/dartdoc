@@ -283,7 +283,9 @@ class Dartdoc {
         <meta charset="utf-8">
         <title>$title</title>
         <link rel="stylesheet" type="text/css"
-            href="${relativePath('styles.css')}" />
+          href="${relativePath('styles.css')}" />
+          <link rel="stylesheet" type="text/css" media="print"
+            href="${relativePath('print.css')}" />
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
         <link rel="shortcut icon" href="${relativePath('favicon.ico')}" />
         <script src="${relativePath('$clientScript.js')}"></script>
