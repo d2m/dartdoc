@@ -4,21 +4,21 @@
  */
 class Search {
   /** Index of available documentation files. */
-  List filelist;
-  /** Inverted index, used in searchterms. */
+  List fileList;
+  /** Inverted index, used in searchTerms. */
   List id;
   /** List of available navigation entries. */
   List<_NavItem> navigation;
   /** Searchindex. */
-  Map<String, List> searchterms;
+  Map<String, List> searchTerms;
   /** Names used for navigation icon entries. */
   List typ;
   
   Search()
-  : filelist = [],
+  : fileList = [],
     id = [],
     navigation = [],
-    searchterms = {},
+    searchTerms = {},
     typ = ['library', 'class', 'interface', 'exception'];
   
   /** Add a navigation entry. */
@@ -45,14 +45,14 @@ class Search {
       return;
     }
     List key = [];
-    if (searchterms.containsKey(a)) {
-      key = searchterms[a];
+    if (searchTerms.containsKey(a)) {
+      key = searchTerms[a];
     }
     key.add(termitem);
-    searchterms[a] = key;
+    searchTerms[a] = key;
   }
 
-  /** Like [files/endFile], but write to current direcory. */
+  /** Like [files.dart:endFile()], but write to current direcory. */
   void endLocalFile() {
     String outPath = _filePath;
     world.files.createDirectory(dirname(outPath), recursive: true);
@@ -98,14 +98,14 @@ class Search {
     write('}');
   }
 
-  /** Serializes int to a file. */
+  /** Serializes an int to a file. */
   void writeInt(int i) {
     write('$i');
   }
 
-  /** Serializes String to a file. */
+  /** Serializes a String to a file. */
   void writeString(String s) {
-    // escape quotes
+    // Escape enclosed quotes.
     s = s.replaceAll("'", "\\'");
     write("'$s'");
   }
@@ -116,63 +116,68 @@ class Search {
    */
   void contents2dart(bool enableSearch) {
     var _out;
-    // this file is used to be sourced into another dart file.
+    // This file is used to be sourced into another dart file.
     startFile('searching.dart');
 
+    // Enclosing function start.
     writeln('_terms() {');
         
     if (enableSearch == true) {
 
-      // create an inverted index for navigation
+      // navigation is a list of (filename, typ, title, ...).
+      // Create an inverted index for navigation.
       _out = [];
 
       for (_NavItem navitem in navigation) {
-        if (filelist.indexOf(navitem.filename) == -1) {
-          filelist.add(navitem.filename);
+        if (fileList.indexOf(navitem.filename) == -1) {
+          fileList.add(navitem.filename);
         }
-        _out.add(filelist.indexOf(navitem.filename));
+        _out.add(fileList.indexOf(navitem.filename));
         _out.add(typ.indexOf(navitem.typ));
         _out.add(navitem.title);
       }
       navigation = _out;
       
-      // searchterms is a Map of (term, [[filename, membername], ...])
-      // create an inverted index
+      // searchTerms is a Map of (term, [filename, membername, ...]).
+      // Create an inverted index.
       _out = {};
-      for (String key in searchterms.getKeys()) {
-        List termitems = searchterms[key];
+      for (String key in searchTerms.getKeys()) {
+        List termitems = searchTerms[key];
         List bco = [];
         for (_TermItem termitem in termitems) {
           if (id.indexOf(termitem.memberid) == -1) {
             id.add(termitem.memberid);
           }
-          bco.add(filelist.indexOf(termitem.filename));
+          bco.add(fileList.indexOf(termitem.filename));
           bco.add(id.indexOf(termitem.memberid));
         }
         _out[key] = bco;        
       }
-      searchterms = _out;
+      searchTerms = _out;
       
+      // Result map holds data and indexes.
       Map out = {'nav': navigation,
-                 'filelist': filelist,
+                 'filelist': fileList,
                  'typ': typ,
                  'id': id,
-                 'terms': searchterms};
+                 'terms': searchTerms};
 
+      // Write data.
       writeln('var terms = ');
       writeMap(out);
       writeln(';');
     } else {
+      // Write data.
       writeln('var terms = null;');
     }
     
+    // Enclosing function end.
     writeln('return terms;');
     writeln('}');
 
+    // Close file.
     endLocalFile();
-
   } 
-
 }
 
 /** Helper class */
@@ -186,6 +191,7 @@ class _NavItem {
     filename = a[0];
     typ = a[1];
     title = a[2];
+    // poor man's hash for sorting.
     _hash = '$filename $typ $title';
   }
 }
@@ -199,6 +205,7 @@ class _TermItem {
   _TermItem(a) {
     filename = a[0];
     memberid = a[1];
+    // poor man's hash for sorting.
     _hash = '$filename $memberid';
   }
 }
