@@ -201,7 +201,8 @@ class Dartdoc {
       world.resolveAll();
 
       // Generate the docs.
-      if (mode == MODE_LIVE_NAV) docNavigationJson();
+      //if (mode == MODE_LIVE_NAV) docNavigationJson();
+      if (mode == MODE_LIVE_NAV) docNavigationDart();
       if (enableSearch) docSearchNavigation();
 
       docIndex();
@@ -349,6 +350,39 @@ class Dartdoc {
 
     writeln(JSON.stringify(libraries));
     endFile();
+  }
+
+  docNavigationDart() {
+    startFile('navigating.dart');
+
+    final libraries = {};
+
+    for (final library in orderByName(world.libraries)) {
+      final types = [];
+
+      for (final type in orderByName(library.types)) {
+        if (type.isTop) continue;
+        if (type.name.startsWith('_')) continue;
+
+        final kind = type.isClass ? 'class' : 'interface';
+        final url = typeUrl(type);
+        types.add({ 'name': typeName(type), 'kind': kind, 'url': url });
+      }
+
+      libraries[library.name] = types;
+    }
+
+    // Enclosing function start.
+    writeln('_libraries() {');
+    writeln('var libraries = ');
+    search.writeMap(libraries);
+    writeln(';');
+    // Enclosing function end.
+    writeln('return libraries;');
+    writeln('}');
+
+    // Write to the current directory.
+    search.endLocalFile();
   }
 
   docNavigation() {

@@ -13,6 +13,7 @@
 
 #source('client-shared.dart');
 #source('searching.dart');
+#source('navigating.dart');
 #source('client-search.dart');
 
 
@@ -32,11 +33,7 @@ main() {
     prefix = (currentType != null) ? '../' : '';
 
     enableCodeBlocks();
-    // Request the navigation data so we can build the HTML for it.
-    new XMLHttpRequest.getTEMPNAME('${prefix}nav.json', (request) {
-      buildNavigation(JSON.parse(request.responseText));
-    });
-
+    buildNavigation(_libraries());
     searchWidget();
   });
 }

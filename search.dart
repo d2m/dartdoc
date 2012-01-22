@@ -105,7 +105,7 @@ class Search {
 
   /** Serializes a String to a file. */
   void writeString(String s) {
-    // Escape enclosed quotes.
+    // Escape enclosed single quotes.
     s = s.replaceAll("'", "\\'");
     write("'$s'");
   }
