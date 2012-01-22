@@ -64,25 +64,51 @@ class Search {
   
   /** 
    * Serialize a collection to a file. 
-   * Works for String, int and List.
+   * Works for String, int, List and Map.
    */
-  void writelist(var l) {
+  void writeList(var l) {
     write('[');
     bool first = true;
     for (var item in l) {
       if (!first) write(', ');
-      if (item is String) {
-        // escape quotes
-        item = item.replaceAll("'", "\\'");
-        write("'$item'");
-      }
-      if (item is int) write(item);
-      if (item is List) writelist(item);
+      if (item is String) writeString(item);
+      if (item is int) writeInt(item);
+      if (item is List) writeList(item);
+      if (item is Map) writeMap(item);
       first = false;
     }
     write(']');
   }
 
+  /** Serializes a Map to a file. */
+  void writeMap(Map m) {
+    write('{');
+    bool first = true;
+    for (String key in m.getKeys()) {
+      if (!first) writeln(',');
+      writeString(key);
+      write(': ');
+      var value = m[key];
+      if (value is String) writeString(value);
+      if (value is int) writeInt(value);
+      if (value is List) writeList(value);
+      if (value is Map) writeMap(value);
+      first = false;
+    }
+    write('}');
+  }
+
+  /** Serializes int to a file. */
+  void writeInt(int i) {
+    write('$i');
+  }
+
+  /** Serializes String to a file. */
+  void writeString(String s) {
+    // escape quotes
+    s = s.replaceAll("'", "\\'");
+    write("'$s'");
+  }
   
   /** 
    * Write a dart file from a datastructure, create a sourceable file with 
@@ -90,13 +116,13 @@ class Search {
    */
   void contents2dart(bool enableSearch) {
     var _out;
-    startFile('searching.dart');
     // this file is used to be sourced into another dart file.
+    startFile('searching.dart');
+
     writeln('_terms() {');
-    
+        
     if (enableSearch == true) {
-      writeln('var terms = {};');
-      
+
       // create an inverted index for navigation
       _out = [];
 
@@ -127,31 +153,15 @@ class Search {
       }
       searchterms = _out;
       
-      // write file entires.
-      write("terms['nav'] = ");
-      writelist(navigation);
+      Map out = {'nav': navigation,
+                 'filelist': filelist,
+                 'typ': typ,
+                 'id': id,
+                 'terms': searchterms};
+
+      writeln('var terms = ');
+      writeMap(out);
       writeln(';');
-      write("terms['filelist'] = ");
-      writelist(filelist);
-      writeln(';');
-      write("terms['typ'] = ");
-      writelist(typ);
-      writeln(';');
-      write("terms['id'] = ");
-      writelist(id);
-      writeln(';');
-      
-      writeln("terms['terms'] = {");
-      var v, first;
-      first = true;
-      for (String key in searchterms.getKeys()) {
-        if (!first) writeln(', ');
-        write("'$key': ");
-        v = searchterms[key];
-        writelist(v);
-        first = false;
-      }
-      writeln('};');
     } else {
       writeln('var terms = null;');
     }
@@ -160,6 +170,7 @@ class Search {
     writeln('}');
 
     endLocalFile();
+
   } 
 
 }
