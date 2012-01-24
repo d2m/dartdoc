@@ -1,0 +1,53 @@
+hacking dartdocs
+================
+
+Adding a search functionality to dartdocs documentation.
+This is a prototype, source will be released when we reach
+a consensus on functionality and style.
+
+
+2012-01-22 == latest
+--------------------
+
+changed XMLHTTPRequest based dynamic navigation to dart based nav
+dartdocs now works from filesystem and from a server in all modes again
+
+
+2012-01-20
+----------
+
+pushed source to github.com/d2m/dartdoc
+merged with latest bleeding_edge
+
+
+2012-01-12
+----------
+
+enabled source code highlighting again
+escaped querystrings against XSS /ht floitsch
+
+
+2012-01-11
+----------
+
+rewrite reduced resources significantly
+search data is now written to a dart file and sourced for compilation
+file size down from 2.1MB JSON + 500KB JS to 900KB JS only
+search functionality works from filesystem and from server
+results show filtered content of the original documentation files
+
+
+2012-01-04
+----------
+
+removed private keys
+enabled search in the current selected library or in all libraries
+added cookies to store search settings
+added media stylesheet for 'print'
+
+
+2012-01-01
+----------
+
+Initial upload
+
